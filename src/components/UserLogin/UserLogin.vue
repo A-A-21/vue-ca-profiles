@@ -1,45 +1,67 @@
 <template>
   <div class="user-login">
     <v-sheet width="300" class="mx-auto">
-      <v-form fast-fail @submit.prevent="submitForm">
+      <v-form @submit.prevent="submitForm">
         <v-text-field
-          v-model="inputValue.firstName"
-          label="First name"
-          :rules="firstNameRules"
+            v-model="inputValue.login"
+            label="login"
+            :rules="loginRules"
         ></v-text-field>
 
         <v-text-field
-          v-model="inputValue.lastName"
-          label="Last name"
-          :rules="lastNameRules"
+            v-model="inputValue.password"
+            label="password"
+            :rules="passwordRules"
+            type="password"
         ></v-text-field>
 
-        <v-btn type="submit" class="mt-2">Submit</v-btn>
+        <v-alert v-if="error" type="error">{{ error }}</v-alert>
+
+        <v-btn type="submit" block class="mt-2">Submit</v-btn>
       </v-form>
     </v-sheet>
   </div>
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import {reactive, ref} from "vue";
+import dataUsers from '../../db/database.json'
+import {useRouter} from "vue-router";
 
-const inputValue = reactive({ firstName: "", lastName: "" });
+const router = useRouter();
+const inputValue = reactive({login: "", password: ""});
+const error = ref('');
 
-const firstNameRules = [
+
+const loginRules = [
   (value) => {
     if (value?.length > 3) return true;
     return "First name must be at least 3 characters.";
   },
 ];
-const lastNameRules = [
+
+const passwordRules = [
   (value) => {
-    if (/[^0-9]/.test(value)) return true;
-    return "Last name can not contain digits.";
+    if (value.length >= 8 && /\d/.test(value)) {
+      return true; // Валидация прошла успешно
+    } else {
+      return "Password must be at least 8 characters long and contain at least one digit.";
+    }
   },
 ];
 
 const submitForm = () => {
-  alert("go");
+  const [currentUser] = dataUsers.filter(user => user.login === inputValue.login);
+  if (currentUser) {
+    if (currentUser.password === inputValue.password) {
+      console.log('alewka')
+      router.push('/protected');
+    } else {
+      error.value = 'Not valid password'
+    }
+  } else {
+    error.value = 'Not found user'
+  }
 };
 </script>
 
