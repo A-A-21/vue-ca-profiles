@@ -1,6 +1,6 @@
 {
   "name": "vue-ca-profiles",
-  "version": "0.0.0",
+  "author": "A-A-21",
   "private": true,
   "scripts": {
     "serve": "vite preview",

@@ -50,17 +50,27 @@ const passwordRules = [
   },
 ];
 
-const submitForm = () => {
-  const [currentUser] = dataUsers.filter(user => user.login === inputValue.login);
+const authorization = async (userValue) => {
+  let errorMsg = '';
+  const [currentUser] = dataUsers.filter(user => user.login === userValue.login);
   if (currentUser) {
-    if (currentUser.password === inputValue.password) {
-      console.log('alewka')
-      router.push('/protected');
-    } else {
-      error.value = 'Not valid password'
+    if (currentUser.password === userValue.password) {
+      localStorage.setItem('auth', userValue.login);
+      return {status: true};
     }
+    errorMsg = 'Not valid password'
+    return {status: false, msg: errorMsg};
+  }
+  errorMsg = 'Not found user';
+  return {status: false, msg: errorMsg};
+}
+
+const submitForm = async () => {
+  const {msg} = await authorization(inputValue);
+  if (msg) {
+    error.value = msg;
   } else {
-    error.value = 'Not found user'
+    await router.push('/public');
   }
 };
 </script>

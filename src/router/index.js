@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import {createRouter, createWebHistory} from "vue-router";
 import LoginPage from "../pages/LoginPage.vue";
 import PublicPage from "../pages/PublicPage.vue";
 import ProtectedPage from "../pages/ProtectedPage.vue";
@@ -29,7 +29,8 @@ const router = createRouter({
 const isAuthenticated = Boolean(localStorage.getItem("auth"));
 
 router.beforeEach((to, from, next) => {
-    if (to.name === "protected" && !isAuthenticated) next("/");
+    if (to.name === "protected" && !isAuthenticated) next('/');
+    if (to.name === 'login' && isAuthenticated) next('/protected')
     else next();
 });
 
